@@ -112,6 +112,9 @@ import { IGetReviewUseCase } from "../../entities/useCaseInterfaces/review/IGetR
 import { GetReviewUseCase } from "../../usecase/review/getReviewUseCase";
 import { IGetRevenueDataUseCase } from "../../entities/useCaseInterfaces/admin/IGetRevenueDataUseCase";
 import { GetRevenueDataUseCase } from "../../usecase/admin/GetRevenueDataUseCase";
+import { NewsApiService } from "../newsApi/NewsApiService";
+import { register } from "module";
+import { INewsApiService } from "../../entities/services/INewsApiService";
 
 export class UseCaseRegistery {
   static registerUseCases(): void {
@@ -275,6 +278,10 @@ export class UseCaseRegistery {
     container.register<IDashBoardServices>("IDashBoardServices", { 
       useClass: DashBoardServices 
     });
+
+    container.register<INewsApiService>("INewsApiService",{
+      useClass:NewsApiService
+    })
 
     container.register<IGetUserWalletDetailsUseCase>("IGetUserWalletDetailsUseCase", {
       useClass: GetUserWalletDetailsUseCase,
