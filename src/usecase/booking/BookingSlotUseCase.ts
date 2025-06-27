@@ -24,6 +24,7 @@ export class BookingSlotUseCase implements IBookingSlotUseCase {
     price: number,
     date: string,
     paymentType:string,
+    game:string,
     playerCount:number
   ): Promise<IBookingEntity> {
     try {
@@ -38,6 +39,7 @@ export class BookingSlotUseCase implements IBookingSlotUseCase {
         price,
         date,
         paymentType,
+        game,
         status: "Booked",
       };
       console.log("data inside usecase", data);
@@ -60,6 +62,7 @@ export class BookingSlotUseCase implements IBookingSlotUseCase {
             paymentType,
             walletContributions,
             status: "Pending",
+            game,
             playerCount
           }
         const saveData = await this.bookingRepo.saveSharedBooking(data)
@@ -93,5 +96,5 @@ export class BookingSlotUseCase implements IBookingSlotUseCase {
       console.error("BookingSlotUseCase failed:", error);
       throw new Error("Failed to save booking");
     }
-  }
+    }
 }

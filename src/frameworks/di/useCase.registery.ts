@@ -110,6 +110,8 @@ import { IAddReviewUseCase } from "../../entities/useCaseInterfaces/review/IAddR
 import { AddReviewUseCase } from "../../usecase/review/addReviewUsecase";
 import { IGetReviewUseCase } from "../../entities/useCaseInterfaces/review/IGetReviewUseCase";
 import { GetReviewUseCase } from "../../usecase/review/getReviewUseCase";
+import { IGetRevenueDataUseCase } from "../../entities/useCaseInterfaces/admin/IGetRevenueDataUseCase";
+import { GetRevenueDataUseCase } from "../../usecase/admin/GetRevenueDataUseCase";
 
 export class UseCaseRegistery {
   static registerUseCases(): void {
@@ -324,6 +326,10 @@ export class UseCaseRegistery {
 
     container.register<IGetReviewUseCase>("IGetReviewUseCase",{
       useClass:GetReviewUseCase
+    })
+
+    container.register<IGetRevenueDataUseCase>("IGetRevenueDataUseCase",{
+      useClass:GetRevenueDataUseCase
     })
     //Register Strategy
     container.register("ClientRegisterStrategy", {

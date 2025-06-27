@@ -13,6 +13,7 @@ import { ICancelGameUseCase } from "../../../entities/useCaseInterfaces/booking/
 import { ICancelGameTurfSideUseCase } from "../../../entities/useCaseInterfaces/booking/ICancelGameTurfSideUseCase";
 import { ITurfDashBoardUseCase } from "../../../entities/useCaseInterfaces/booking/ITurfDashBoardUseCase";
 import { IAdminDashBoardUseCase } from "../../../entities/useCaseInterfaces/booking/IAdminDashBoardUseCase";
+import { IGetRevenueDataUseCase } from "../../../entities/useCaseInterfaces/admin/IGetRevenueDataUseCase";
 
 
 @injectable()
@@ -26,7 +27,8 @@ export  class BookingController implements IBookingController{
         @inject("ICancelGameUseCase") private _cancelGameUseCase:ICancelGameUseCase,
         @inject("ICancelGameTurfSideUseCase") private _cancelGameTurfSideUseCase:ICancelGameTurfSideUseCase,
         @inject("ITurfDashBoardUseCase") private _getTurfDashBoardUseCase:ITurfDashBoardUseCase,
-        @inject("IAdminDashBoardUseCase") private _getAdminDashBoardUseCase:IAdminDashBoardUseCase
+        @inject("IAdminDashBoardUseCase") private _getAdminDashBoardUseCase:IAdminDashBoardUseCase,
+        @inject("IGetRevenueDataUseCase") private _getRevenueDataUseCase:IGetRevenueDataUseCase
         
 
     ){}
@@ -257,5 +259,26 @@ export  class BookingController implements IBookingController{
         } catch (error) {
             handleErrorResponse(res, error);
         }
+    }
+
+    async getRevenueData(req:Request,res:Response):Promise<void>{
+        try {
+            const revenueData = await this._getRevenueDataUseCase.execute()
+            if(!revenueData){
+                res.status(HTTP_STATUS.NOT_FOUND).json({
+                    success:false,
+                    message:SUCCESS_MESSAGES.FAILED_DATA_FETCH
+                })
+                return 
+            }else{
+                res.status(HTTP_STATUS.OK).json({
+                    success:true,
+                    revenueData
+                })
+            }
+        } catch (error) {
+            handleErrorResponse(res,error)
+        }
+        
     }
 }

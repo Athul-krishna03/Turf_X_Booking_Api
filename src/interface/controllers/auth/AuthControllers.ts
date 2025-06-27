@@ -277,7 +277,7 @@ export class AuthController implements IAuthController {
       handleErrorResponse(res, error);
     }
   }
-   refreshToken(req:Request,res:Response):void{
+    refreshToken(req:Request,res:Response):void{
     try {
       const refreshToken = (req as CustomRequest).user.refresh_token;
       const newTokens = this._refreshTokenUseCase.execute(refreshToken);

@@ -44,6 +44,7 @@ export class GetUserBookingDetialsUseCase implements IGetUserBookingDetialsUseCa
       const turf = await this.turfRepo.getTurfByTurfId(booking.turfId);
       const bookingWithTurf = {
         id: booking.id.toString(),
+        bookingId:booking.bookingId,
         turfId: booking.turfId,
         turfName: turf?.name || '',
         turfImage: turf?.turfPhotos || [],

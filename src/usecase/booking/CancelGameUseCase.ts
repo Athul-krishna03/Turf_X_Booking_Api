@@ -8,6 +8,7 @@ import { IRedisClient } from "../../entities/services/IRedisClient";
 import { IWalletSercvices } from "../../entities/services/IWalletServices";
 import { IPushNotificationService } from "../../entities/services/IPushNotificationService";
 import { NotificationType } from "../../shared/constants";
+import { ISlotService } from "../../entities/services/ISlotService";
 
 
 
@@ -17,6 +18,7 @@ export class CancelGameUseCase implements ICancelGameUseCase{
         @inject('IBookingRepository') private _bookingRepo: IBookingRepository,
         @inject('ISlotRepository') private _slotRepo: ISlotRepository,
         @inject("IRedisClient") private _redis:IRedisClient,
+        @inject("ISlotService") private _slotService:ISlotService,
         @inject('IWalletSercvices') private _walletService: IWalletSercvices,
         @inject("IPushNotificationService") private _pushNotificationService:IPushNotificationService
     ) {}
@@ -37,17 +39,8 @@ export class CancelGameUseCase implements ICancelGameUseCase{
                 throw new Error('Booking not found or already canceled');
             }
             console.log("data in cancel game use case", data);
-            if(booking.userIds[0]==data.userId){
-                const slotData = await this._slotRepo.findOne({
-                    turfId: booking.turfId,
-                    date: booking.date,
-                    startTime: booking.time
-                });
-                console.log("slot data in cancel game use case", slotData);
-                
-                if (slotData) {
-                    await this._slotRepo.update(slotData.id!, { isBooked: false });
-                }
+            if(booking.userIds[0]==data.userId)  {
+                await this._slotService.cancelTheSlots(booking)
                 for(let usersId of booking.userIds){
                     const data={
                         type: "credit",
