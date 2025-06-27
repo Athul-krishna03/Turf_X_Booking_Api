@@ -6,6 +6,7 @@ import { IChatRoomRepository } from "../../entities/repositoryInterface/chatRoom
 import { ClientModel } from "../database/models/client.model";
 import { IMessageRepository } from "../../entities/repositoryInterface/chatRoom/message-repository";
 import { Types } from "mongoose";
+import { config } from "../../shared/config";
 
 
 @injectable()
@@ -20,7 +21,7 @@ export class SocketServer{
     ){
         this.io = new Server(server,{
             cors:{
-                origin: 'http://localhost:5173', 
+                origin: config.cors.ALLOWED_ORGIN, 
                 methods: ['GET', 'POST','PATCH'],
             }
         });
