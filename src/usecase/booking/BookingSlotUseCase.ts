@@ -43,8 +43,16 @@ export class BookingSlotUseCase implements IBookingSlotUseCase {
       };
       console.log("data inside usecase", data);
       if (paymentType == "single") {
-        const saveData = await this.bookingRepo.save(data);
-        return saveData as IBookingEntity;
+        const bookingData= await this.bookingRepo.getUserBookingDetials(userId)
+        const date = new Date().getDay()
+        const filtered = bookingData.filter((data)=> (new Date(data.date).getDay() >= date && (new Date(data.date).getDay() < date + 3) ))
+        console.log("filtered data count",filtered.length)
+        if(filtered.length <= 3){
+          const saveData = await this.bookingRepo.save(data);
+          return saveData as IBookingEntity;
+        }else{
+          throw Error("limit execeed")
+        }
       } else if (paymentType == "shared") {
         let userIds = [userId];
         let walletContributions = new Map<string, number>();
@@ -93,7 +101,7 @@ export class BookingSlotUseCase implements IBookingSlotUseCase {
       }
     } catch (error) {
       console.error("BookingSlotUseCase failed:", error);
-      throw new Error("Failed to save booking");
+      throw new Error("Failed to save");
     }
   }
 }
