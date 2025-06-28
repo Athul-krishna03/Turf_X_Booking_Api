@@ -72,7 +72,6 @@ export class GetUserBookingDetialsUseCase implements IGetUserBookingDetialsUseCa
 
     const upcomingJoined: any[] = [];
     const pastJoined: any[] = [];
-    console.log("inside cond",joinedGamesData);
     for (let game of userJoinedGames) {
   
         const turf = await this.turfRepo.getTurfByTurfId(game.turfId);
@@ -93,8 +92,6 @@ export class GetUserBookingDetialsUseCase implements IGetUserBookingDetialsUseCa
             sport: "Football",
             walletBalance,
             playerCount: game.playerCount,
-            // isHost: game.hostId === userId,
-            // canConfirmSlot: game.hostId === userId && game.isSlotLocked === false,
             joinedUsers: game.userIds
     };
 

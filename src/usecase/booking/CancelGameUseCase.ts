@@ -16,7 +16,6 @@ import { ISlotService } from "../../entities/services/ISlotService";
 export class CancelGameUseCase implements ICancelGameUseCase{
     constructor(
         @inject('IBookingRepository') private _bookingRepo: IBookingRepository,
-        @inject('ISlotRepository') private _slotRepo: ISlotRepository,
         @inject("IRedisClient") private _redis:IRedisClient,
         @inject("ISlotService") private _slotService:ISlotService,
         @inject('IWalletSercvices') private _walletService: IWalletSercvices,
@@ -38,7 +37,6 @@ export class CancelGameUseCase implements ICancelGameUseCase{
             if(!booking){
                 throw new Error('Booking not found or already canceled');
             }
-            console.log("data in cancel game use case", data);
             if(booking.userIds[0]==data.userId)  {
                 await this._slotService.cancelTheSlots(booking)
                 for(let usersId of booking.userIds){
@@ -63,7 +61,6 @@ export class CancelGameUseCase implements ICancelGameUseCase{
 
                 const amount = booking.price/booking.playerCount || 0;
                 console.log("data in refund:", amount,now, cancellationWindow);
-                // const refundAmount = now < cancellationWindow ? amount : amount || 0 * 0.5; // 50% refund if late
                 if (now < cancellationWindow) {
                     console.log("Refunding full amount:", amount,now, cancellationWindow);
                     const transction = {

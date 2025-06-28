@@ -11,7 +11,6 @@ export class WalletServices  implements IWalletSercvices {
     ) {}
 
     async addFundsToWallet(userId: string, amount: number,data:object,userType:string): Promise<IWalletEntity> {
-        console.log("userId",userId,"amount",amount,"userType",userType);
         const wallet = await this._walletRepo.findByUserId(userId,userType);
         if (!wallet) {
             const newWallet = await this._walletRepo.save({

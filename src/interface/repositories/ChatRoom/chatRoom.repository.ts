@@ -1,5 +1,4 @@
 import { IChatRoomEntity } from "../../../entities/models/chatRoom.entity";
-import {  IMessageEntity } from "../../../entities/models/message.entity";
 import { IChatRoomRepository } from "../../../entities/repositoryInterface/chatRoom/chat-room-repository";
 import { ChatRoomModel } from "../../../frameworks/database/models/chatRoom.model";
 
@@ -20,7 +19,6 @@ export class ChatRoomRepository implements IChatRoomRepository{
     }
 
     async addUserToChatRoom(chatRoomId: string, userId: string): Promise<void> {
-        console.log("chtaId",chatRoomId,"userId",userId);
         await ChatRoomModel.findByIdAndUpdate(
         { _id: chatRoomId },
         { $addToSet: { users: userId } }, 

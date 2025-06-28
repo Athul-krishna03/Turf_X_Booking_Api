@@ -13,7 +13,8 @@ import { messaging } from "../../shared/config";
 export class BookingSlotUseCase implements IBookingSlotUseCase {
   constructor(
     @inject("IBookingRepository") private bookingRepo: IBookingRepository,
-    @inject("INotificationRepository") private _notificationRepo: INotificationRepository,
+    @inject("INotificationRepository")
+    private _notificationRepo: INotificationRepository,
     @inject("IClientRepository") private _clientRepo: IClientRepository
   ) {}
   async execute(
@@ -23,13 +24,12 @@ export class BookingSlotUseCase implements IBookingSlotUseCase {
     duration: number,
     price: number,
     date: string,
-    paymentType:string,
-    game:string,
-    playerCount:number
+    paymentType: string,
+    game: string,
+    playerCount: number
   ): Promise<IBookingEntity> {
     try {
-
-      const bookingId = generateBookingId()
+      const bookingId = generateBookingId();
       const data = {
         userId,
         turfId,
@@ -43,58 +43,57 @@ export class BookingSlotUseCase implements IBookingSlotUseCase {
         status: "Booked",
       };
       console.log("data inside usecase", data);
-      if(paymentType == "single"){
+      if (paymentType == "single") {
         const saveData = await this.bookingRepo.save(data);
         return saveData as IBookingEntity;
-      }else if(paymentType == "shared"){
-        let userIds=[userId]
+      } else if (paymentType == "shared") {
+        let userIds = [userId];
         let walletContributions = new Map<string, number>();
         walletContributions.set(userId, price);
         price = price * playerCount;
-        let data={
-            turfId,
-            time,
-            userIds,
-            bookingId,
-            duration,
-            price,
-            date,
-            paymentType,
-            walletContributions,
-            status: "Pending",
-            game,
-            playerCount
-          }
-        const saveData = await this.bookingRepo.saveSharedBooking(data)
+        let data = {
+          turfId,
+          time,
+          userIds,
+          bookingId,
+          duration,
+          price,
+          date,
+          paymentType,
+          walletContributions,
+          status: "Pending",
+          game,
+          playerCount,
+        };
+        const saveData = await this.bookingRepo.saveSharedBooking(data);
         const user = await this._clientRepo.findById(data.userIds[0]);
-        if(user?.id){
-            await this._notificationRepo.create(
-                data.userIds[0],
-                NotificationType.HOSTED_GAME,
-                `Your booking for ${data.date} at ${data.time} has been created successfully.`,
-                "Booking Created",
-            );
+        if (user?.id) {
+          await this._notificationRepo.create(
+            data.userIds[0],
+            NotificationType.HOSTED_GAME,
+            `Your booking for ${data.date} at ${data.time} has been created successfully.`,
+            "Booking Created"
+          );
         }
 
-        if(user?.fcmToken){
-            await messaging.send({
-                notification:{
-                    title: "Booking Created",
-                    body: `Your booking for ${data.date} at ${data.time} has been created successfully.`,
-                },
-                token: user.fcmToken,
-            });
+        if (user?.fcmToken) {
+          await messaging.send({
+            notification: {
+              title: "Booking Created",
+              body: `Your booking for ${data.date} at ${data.time} has been created successfully.`,
+            },
+            token: user.fcmToken,
+          });
         }
 
-        return saveData as IBookingEntity
-      }else{
-          const saveData = await this.bookingRepo.save(data);
-          return saveData as IBookingEntity;
+        return saveData as IBookingEntity;
+      } else {
+        const saveData = await this.bookingRepo.save(data);
+        return saveData as IBookingEntity;
       }
-      
     } catch (error) {
       console.error("BookingSlotUseCase failed:", error);
       throw new Error("Failed to save booking");
     }
-    }
+  }
 }

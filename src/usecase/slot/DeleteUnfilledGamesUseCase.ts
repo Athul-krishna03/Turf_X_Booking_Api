@@ -3,7 +3,6 @@ import { inject, injectable } from "tsyringe";
 import { IBookingRepository } from "../../entities/repositoryInterface/booking/IBookingRepository";
 import { IDeleteUnfilledGamesUseCase } from "../../entities/useCaseInterfaces/IDeleteUnfilledGamesUseCase";
 import { IWalletSercvices } from "../../entities/services/IWalletServices";
-import { ISlotRepository } from "../../entities/repositoryInterface/turf/ISlotRepository";
 import { ISlotService } from "../../entities/services/ISlotService";
 
 @injectable()
@@ -23,9 +22,7 @@ export class DeleteUnfilledGamesUseCase  implements IDeleteUnfilledGamesUseCase{
         if (booking.status !== "Pending" || booking.isSlotLocked) return false;
         const bookingDate = new Date(`${booking.date}T${booking.time}:00+05:30`);
         return bookingDate >= now && bookingDate <= deadline;
-      });
-      console.log("cancling booking",bookings);
-      
+      });  
       for (const booking of bookings) {
         const totalPaid = Object.values(booking.walletContributions).reduce(
           (sum, amt) => sum + amt,
@@ -35,7 +32,6 @@ export class DeleteUnfilledGamesUseCase  implements IDeleteUnfilledGamesUseCase{
           booking.playerCount > booking.userIds.length ||
           totalPaid < booking.price
         ) {
-          console.log("booking in if",booking)
           try {
             await this._bookingRepo.updateJoinedGameBookingStatus(booking.id, {
                 status: "Cancelled",

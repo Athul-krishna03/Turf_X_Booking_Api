@@ -84,8 +84,6 @@ export class BookingRepository implements IBookingRepository {
         price: number;
     }): Promise<ISharedBookingEntity | null> {
         try {
-        console.log("data inside repo", data);
-
         const result = await SharedSlotBookingModel.findOneAndUpdate(
             {
             date: data.date,
@@ -98,8 +96,6 @@ export class BookingRepository implements IBookingRepository {
             },
             { new: true }
         );
-        console.log("data in respo ", result);
-
         return result as ISharedBookingEntity;
         } catch (error) {
         console.error("BookingRepository joinGame error:", error);

@@ -74,14 +74,12 @@ export class SlotService implements ISlotService {
       const nextTime = addHours(startDateTime, i);
       const nextTimeStr = format(nextTime, "HH:mm");
       const date = new Date(bookingData.date).toLocaleDateString("en-CA");
-      console.log("date", date);
       const slotData = await this.slotRepo.findOne({
         turfId: bookingData.turfId,
         date: date,
         startTime: nextTimeStr,
       });
       if (slotData) {
-        console.log(slotData.id, "slot id");
         await this.slotRepo.update(slotData.id!, { isBooked: false });
       }
     }

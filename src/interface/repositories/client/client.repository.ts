@@ -36,10 +36,7 @@ export class ClientRepository extends BaseRepository<IClientModel> implements IC
     }
 
     async findByIdAndUpdateStatus(id: string): Promise<void> {
-        console.log("id user",id);
-        
         const user = await ClientModel.findById(id);
-        console.log("user status",user);
         if(!user){
             throw new Error("User not found");
         }

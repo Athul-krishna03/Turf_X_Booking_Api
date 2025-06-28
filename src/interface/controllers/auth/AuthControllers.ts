@@ -80,9 +80,7 @@ export class AuthController implements IAuthController {
         });
         return;
       }
-      console.log("body data ",req.body)
       const validateData = schema.parse(req.body);
-      console.log("validate data", validateData);
       await this._registerUserUseCase.execute(validateData);
       res.status(HTTP_STATUS.CREATED).json({
         success: true,
@@ -96,14 +94,11 @@ export class AuthController implements IAuthController {
 
   //login User
 
- async login(req: Request, res: Response): Promise<void> {
-    console.log("entered to login controller");
-
+  async login(req: Request, res: Response): Promise<void> {
     try {
       const data = req.body as LoginUserDTO;
       const validateData = loginSchema.parse(data);
       const user =  await this._LoginUserUseCase.execute(validateData)
-      console.log("user data",user)
       if(!user.id || !user.email || !user.role){
         throw new Error("User ID,Email,or Role is missing")
       }
@@ -124,7 +119,6 @@ export class AuthController implements IAuthController {
       accessTokenName,
       refreshTokenName
       )
-      console.log("auth login",user)
       if (user.role === "user" || user.role === "admin") {
         const userEntity = user as IUserEntity;
       
@@ -219,11 +213,7 @@ export class AuthController implements IAuthController {
   async googleAuth(req:Request,res:Response):Promise<void>{
     try{
       const {credential,client_id,role}=req.body;
-
-      console.log("heloo google",req.body)
       const user = await this._googleAuthUseCase.execute(credential,client_id,role);
-      console.log("user data",user)
-
       if(!user.id || !user.email || !user.role){
         throw new Error("User ID,email,or role is missing");
       }
@@ -287,8 +277,6 @@ export class AuthController implements IAuthController {
     try {
       const refreshToken = (req as CustomRequest).user.refresh_token;
       const newTokens = this._refreshTokenUseCase.execute(refreshToken);
-      console.log("newtoken",newTokens);
-      
       const accessTokenName = `${newTokens.role}_access_token`;
       updateCookieWithAccessToken(
         res,

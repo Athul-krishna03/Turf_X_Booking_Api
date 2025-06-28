@@ -36,8 +36,6 @@ export  class BookingController implements IBookingController{
         try {
             const userId = (req as CustomRequest).user.id
             const bookings = await this._getUserBookingDetialsUseCase.execute(userId);
-            console.log(bookings);
-            
             if(!bookings){
                 res.status(HTTP_STATUS.NOT_FOUND).json({
                     success: false,
@@ -130,8 +128,6 @@ export  class BookingController implements IBookingController{
     
     async normalGameCancel(req:Request,res:Response):Promise<void>{
         const {bookingId,bookingType} = req.body as {bookingId:string,bookingType:string};
-        console.log("bookingId", req.body);
-        
         const result = await this._normalGameCancel.execute(bookingId);
         if(!result){
             res.status(HTTP_STATUS.NOT_FOUND).json({
@@ -151,8 +147,6 @@ export  class BookingController implements IBookingController{
     async cancelJoinedGame(req:Request,res:Response):Promise<void>{
         try{
             const userId = (req as CustomRequest).user.id;
-            console.log("bosy", req.body);
-            
             const {bookingId,isHost} = req.body as {bookingId:string,isHost:boolean};
             if (!bookingId) {
                 res.status(HTTP_STATUS.BAD_REQUEST).json({

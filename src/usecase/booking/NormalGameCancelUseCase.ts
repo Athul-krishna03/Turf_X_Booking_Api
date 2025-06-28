@@ -17,8 +17,6 @@ export class NormalGameCancelUseCase implements INormalGameCancelUseCase{
         @inject('IWalletSercvices') private _walletService: IWalletSercvices,
     ){}
     async execute(bookingId: string): Promise<IBookingEntity | null> {
-        console.log("bookingId", bookingId);
-        
         const result=await this._bookingRepo.cancelNormalGame(bookingId);
         if(result && result.duration > 0){
             await this._slotService.cancelTheSlots(result)

@@ -17,7 +17,6 @@ export class TurfRepository extends BaseRepository<ITurfModel> implements  ITurf
     }
     async findByEmail(email: string): Promise<ITurfEntity | null> {
         const client = await TurfModel.findOne({email}).lean();
-        console.log("turf client inside findby email",client)
         if(!client) return null;
 
         return{
@@ -30,9 +29,7 @@ export class TurfRepository extends BaseRepository<ITurfModel> implements  ITurf
     async find(filter: any, skip: number, limit: number,location?:[number,number]): Promise<{ turfs: ITurfEntity[] | []; total: number; }> {
         
         if (location && location.length === 2) {
-            console.log("cooredinates",location)
             const [lng, lat] = location;
-
             const pipeline: PipelineStage[] = [
                 {
                     $geoNear: {
@@ -65,9 +62,7 @@ export class TurfRepository extends BaseRepository<ITurfModel> implements  ITurf
     }
 
     async findByIdAndUpdateStatus(id: string): Promise<void> {
-        console.log("id turf",id);
         const user = await TurfModel.findById({_id:id});
-        console.log("user status",user);
         if(!user){
             throw new Error("User not found");
         }
@@ -78,8 +73,6 @@ export class TurfRepository extends BaseRepository<ITurfModel> implements  ITurf
 
     async findByIdAndUpdateRequest(id: string,status:string): Promise<void> {
         const user = await TurfModel.findById({_id:id});
-        console.log("update status in repo",status)
-        console.log("user status",user);
         if(!user){
             throw new Error("User not found");
         }
@@ -88,7 +81,6 @@ export class TurfRepository extends BaseRepository<ITurfModel> implements  ITurf
 
     async findById(id: string): Promise<ITurfEntity | null> {
         const client = await TurfModel.findById({_id:id}).lean();
-        console.log("turf client inside findby email",client)
         if(!client) return null;
         return{
             ...client,

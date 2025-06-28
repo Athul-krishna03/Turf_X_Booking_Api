@@ -18,7 +18,6 @@ export class DeleteExpiredSlotsUseCase implements IDeleteExpiredSlotsUseCase {
         const slotDateTimeStr = `${slot.date} ${slot.startTime}`;
         const slotStart = parse(slotDateTimeStr, 'yyyy-MM-dd HH:mm', new Date());
         const slotEnd = addMinutes(slotStart, slot.duration);
-     
         if (isNaN(slotStart.getTime())) {
             console.error(`Invalid date parsed for slot: ${slot.id}, date: ${slotDateTimeStr}`);
             return;

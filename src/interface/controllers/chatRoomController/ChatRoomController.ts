@@ -53,7 +53,6 @@ export class ChatRoomControllers{
         try {
             const userId = (req  as CustomRequest)?.user?.id;
             const data = req.body;
-            console.log("create chat room data ",data);
             if(!userId){
                 res.status(HTTP_STATUS.UNAUTHORIZED).json({
                     success:false,
@@ -75,7 +74,6 @@ export class ChatRoomControllers{
     async getChatRoomByGameId(req:Request,res:Response):Promise<void>{
         try {
             const gameId = req.query.gameId as string;
-            console.log("game",gameId)
             if(!gameId){
                 res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success:false,
