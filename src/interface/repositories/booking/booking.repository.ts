@@ -63,11 +63,11 @@ export class BookingRepository implements IBookingRepository {
     }
 
     async findNormalByTurfId(turfId:string):Promise<IBookingEntity[]>{
-        return await BookingModel.find({turfId:turfId})
+        return await BookingModel.find({turfId:turfId,status:"Booked"})
     }
 
     async findSharedByTurfId(turfId:string):Promise<ISharedBookingEntity[]>{
-        return await SharedSlotBookingModel.find({turfId:turfId})
+        return await SharedSlotBookingModel.find({turfId:turfId,status:"Booked"})
     }
 
     async saveSharedBooking(

@@ -32,6 +32,8 @@ import { IRefreshTokenUseCase } from "../../../entities/useCaseInterfaces/auth/I
 import { ILoginTurfUseCase } from "../../../entities/useCaseInterfaces/auth/ILoginTurfUseCase";
 import { IUserEntity } from "../../../entities/models/user.entity";
 import { ITurfEntity } from "../../../entities/models/turf.entity";
+import { IForgotPasswordUseCase } from "../../../entities/useCaseInterfaces/auth/IForgotPasswordUseCase";
+import { IResetPasswordUseCase } from "../../../entities/useCaseInterfaces/auth/IResetPasswordUseCase";
 
 @injectable()
 export class AuthController implements IAuthController {
@@ -53,7 +55,11 @@ export class AuthController implements IAuthController {
     @inject("IBlackListTokenUseCase")
     private _blacklistTokenUseCase:IBlackListTokenUseCase,
     @inject("IRefreshTokenUseCase")
-    private _refreshTokenUseCase:IRefreshTokenUseCase
+    private _refreshTokenUseCase:IRefreshTokenUseCase,
+    @inject("IForgotPasswordUseCase")
+    private _forgotPasswordUseCase:IForgotPasswordUseCase,
+    @inject("IResetPasswordUseCase")
+    private _resetPassword:IResetPasswordUseCase
   ) {}
 
   //register use
@@ -300,5 +306,33 @@ export class AuthController implements IAuthController {
         .status(HTTP_STATUS.UNAUTHORIZED)
         .json({ message: ERROR_MESSAGES.INVALID_TOKEN });
     }
-   }
+  }
+
+  async forgotPassword(req:Request,res:Response):Promise<void>{
+    try {
+      const {email,role} = req.body;
+      const result = await this._forgotPasswordUseCase.execute(email,role)
+      if(result){
+        res.status(HTTP_STATUS.OK).json({message:SUCCESS_MESSAGES.RESETMAIL_SEND_SUCCESS})
+        return
+      }
+    } catch (error) {
+      handleErrorResponse(res,error)
+    }
+  }
+
+  async resetPasswords(req:Request,res:Response):Promise<void>{
+    try {
+      const {token,password}=req.body
+      const result = await this._resetPassword.execute(token,password)
+      if(result){
+        res.status(HTTP_STATUS.OK).json({message:SUCCESS_MESSAGES.PASSWORD_RESET_SUCCESS})
+        return 
+      }else{
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:ERROR_MESSAGES.TOKEN_EXPIRED})
+      }
+    } catch (error) {
+      handleErrorResponse(res,error)
+    }
+  }
 }
