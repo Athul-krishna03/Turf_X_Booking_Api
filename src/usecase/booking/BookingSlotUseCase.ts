@@ -2,7 +2,6 @@ import { inject, injectable } from "tsyringe";
 import { IBookingEntity } from "../../entities/models/booking.entity";
 import { IBookingRepository } from "../../entities/repositoryInterface/booking/IBookingRepository";
 import { IBookingSlotUseCase } from "../../entities/useCaseInterfaces/IBookingSlotUseCase";
-import { ISlotEntity } from "../../entities/models/slot.entity";
 import { generateBookingId } from "../../frameworks/security/uniqueuid.bcrypt";
 import { INotificationRepository } from "../../entities/repositoryInterface/notification/INotificationRepository";
 import { NotificationType } from "../../shared/constants";
@@ -66,25 +65,26 @@ export class BookingSlotUseCase implements IBookingSlotUseCase {
           playerCount,
         };
         const saveData = await this.bookingRepo.saveSharedBooking(data);
-        const user = await this._clientRepo.findById(data.userIds[0]);
+        const user = await this._clientRepo.findById(userId);
         if (user?.id) {
           await this._notificationRepo.create(
-            data.userIds[0],
+            userId,
             NotificationType.HOSTED_GAME,
             `Your booking for ${data.date} at ${data.time} has been created successfully.`,
             "Booking Created"
           );
+            if (user?.fcmToken) {
+              await messaging.send({
+                notification: {
+                  title: "Booking Created",
+                  body: `Your booking for ${data.date} at ${data.time} has been created successfully.`,
+                },
+                token: user.fcmToken,
+              });
+            }
         }
 
-        if (user?.fcmToken) {
-          await messaging.send({
-            notification: {
-              title: "Booking Created",
-              body: `Your booking for ${data.date} at ${data.time} has been created successfully.`,
-            },
-            token: user.fcmToken,
-          });
-        }
+        
 
         return saveData as IBookingEntity;
       } else {
