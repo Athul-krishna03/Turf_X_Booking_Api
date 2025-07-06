@@ -6,6 +6,7 @@ import { ISlotRepository } from "../../entities/repositoryInterface/turf/ISlotRe
 import { ISharedBookingEntity } from "../../entities/models/sharedBooking.entity";
 import { IBookingEntity } from "../../entities/models/booking.entity";
 import { IGetRevenueDataUseCase } from "../../entities/useCaseInterfaces/admin/IGetRevenueDataUseCase";
+import { IWalletRepository } from "../../entities/repositoryInterface/wallet/IWalletRepository";
 
 @injectable()
 export class GetRevenueDataUseCase implements IGetRevenueDataUseCase{
@@ -13,9 +14,20 @@ export class GetRevenueDataUseCase implements IGetRevenueDataUseCase{
         @inject("IBookingRepository")
         private bookingRepo: IBookingRepository,
         @inject("ITurfRepository")
-        private turfRepo: ITurfRepository
+        private turfRepo: ITurfRepository,
+        @inject("IWalletRepository")
+        private walletRepo: IWalletRepository
     ){}
-    async execute(): Promise<{normal:IBookingEntity[],hosted:ISharedBookingEntity[]}> {
+    async execute(): Promise<{
+        normal:IBookingEntity[],
+        hosted:ISharedBookingEntity[],
+        revenueStats:{
+            totalBookings:number,
+            totalEarnings:number,
+            revenue:number,
+            normalBooking:number,
+            sharedBooking:number
+        }}> {
         const normalGame = await this.bookingRepo.getAllBooking()
         const hostedGame = await this.bookingRepo.find()
 
@@ -37,8 +49,17 @@ export class GetRevenueDataUseCase implements IGetRevenueDataUseCase{
             turf: turfDetails,
         });
     }
+    const adminRevenue = await this.walletRepo.getWalletBalance(process.env.ADMIN_ID || "");
+    const revenueStats = {
+        totalBookings: normalGame.length + hostedGame.length,
+        totalEarnings: normalGame.filter(booking => booking.status === "Booked").reduce((total, booking) => total + booking.price, 0) + 
+        hostedGame.filter(game => game.status === "Booked").reduce((total, game) => total + game.price, 0),
+        revenue: adminRevenue,
+        normalBooking: normalGame.length,
+        sharedBooking: hostedGame.length,
+    }
 
-        return {normal:enrichedNormal,hosted:enrichedHosted}
+        return {normal:enrichedNormal,hosted:enrichedHosted,revenueStats:revenueStats,};
 
     }
 }
