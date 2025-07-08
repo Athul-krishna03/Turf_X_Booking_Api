@@ -37,7 +37,13 @@ export class CancelGameUseCase implements ICancelGameUseCase{
             if(!booking){
                 throw new Error('Booking not found or already canceled');
             }
-            if(booking.userIds[0]==data.userId)  {
+            const turfData={
+                type:"debit",
+                amount: booking.price,
+                description:`Booking cancellation of ${booking.bookingId}`
+            }
+            await this._walletService.reduceFunds(booking.turfId, booking.price, turfData, "turf");
+            if(booking.userIds[0]==data.userId){
                 await this._slotService.cancelTheSlots(booking)
                 for(let usersId of booking.userIds){
                     const data={

@@ -50,10 +50,12 @@ export class GetRevenueDataUseCase implements IGetRevenueDataUseCase{
         });
     }
     const adminRevenue = await this.walletRepo.getWalletBalance(process.env.ADMIN_ID || "");
+    const totalEarnings = normalGame.filter(booking => booking.status === "Booked").reduce((total, booking) => total + booking.price, 0) +
+        hostedGame.filter(game => game.status === "Booked").reduce((total, game) => total + game.price, 0);
+    console.log("totalEarnings", totalEarnings); 
     const revenueStats = {
         totalBookings: normalGame.length + hostedGame.length,
-        totalEarnings: normalGame.filter(booking => booking.status === "Booked").reduce((total, booking) => total + booking.price, 0) + 
-        hostedGame.filter(game => game.status === "Booked").reduce((total, game) => total + game.price, 0),
+        totalEarnings: totalEarnings,
         revenue: adminRevenue,
         normalBooking: normalGame.length,
         sharedBooking: hostedGame.length,

@@ -24,8 +24,14 @@ export class NormalGameCancelUseCase implements INormalGameCancelUseCase{
                     type: "credit",
                     amount: result.price,
                     description: "Booking cancellation refund"
-                } 
+            };
+            const turfData={
+                type:"debit",
+                amount: result.price,
+                description:`Booking cancellation of ${result.bookingId}`
+            }
             await this._walletService.addFundsToWallet(result.userId,result.price,data,"client");
+            await this._walletService.reduceFunds(result.turfId,result.price,turfData,"turf");
         } else if (result) {
             const slotData = await this._slotRepo.findOne({
                 turfId: result.turfId,
