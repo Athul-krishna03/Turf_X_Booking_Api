@@ -2,7 +2,7 @@ import { TRole } from "../../shared/constants";
 export interface IUserEntity{
     id?: string;
     name?: string;
-    email?: any;
+    email?: string;
     password: string;
     phone?: string;
     profileImage?: string;
