@@ -13,6 +13,5 @@ export interface IUserEntity{
     bio:string,
     isBlocked: Boolean;
     fcmToken?:string
-    // only for normal player user
     position?:string;
 }
