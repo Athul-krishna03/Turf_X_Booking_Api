@@ -1,3 +1,4 @@
+import { ISharedBookingCommonDTO, SharedBookingCreateDTO } from "../../../shared/dtos/SharedBooking.dto";
 import { IBookingEntity } from "../../models/booking.entity";
 import { ISharedBookingEntity } from "../../models/sharedBooking.entity";
 
@@ -11,8 +12,8 @@ export interface IBookingRepository{
     getTopTurfsByAllBookings(limit: number): Promise<{ turfId: string; turfName: string; totalBookings: number }[]>
     getUserBookingDetials(userId:string):Promise<IBookingEntity[]>
     find():Promise<ISharedBookingEntity[]>
-    saveSharedBooking(data:Partial<ISharedBookingEntity>):Promise<ISharedBookingEntity | IBookingEntity>;
-    joinGame(data:object):Promise<ISharedBookingEntity | null>
+    saveSharedBooking(data:Partial<SharedBookingCreateDTO>):Promise<ISharedBookingEntity | IBookingEntity>;
+    joinGame(data:object):Promise<ISharedBookingCommonDTO | null>
     cancelNormalGame(bookingId: string): Promise<IBookingEntity | null>
     cancelGame(data:{bookingId:string,userId:string,isHost:boolean}):Promise<ISharedBookingEntity | null>
     updateJoinedGameBookingStatus(bookingId: string, data: Partial<ISharedBookingEntity>): Promise<ISharedBookingEntity | null>;

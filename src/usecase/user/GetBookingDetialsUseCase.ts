@@ -6,6 +6,7 @@ import { IGetUserBookingDetialsUseCase } from "../../entities/useCaseInterfaces/
 import { BookingDTO } from "../../entities/models/booking.entity";
 import { ISharedBookingEntity } from "../../entities/models/sharedBooking.entity";
 import { Types } from "mongoose";
+import { SharedBookingDTO } from "../../shared/dtos/SharedBooking.dto";
 
 @injectable()
 export class GetUserBookingDetialsUseCase implements IGetUserBookingDetialsUseCase {
@@ -19,8 +20,8 @@ export class GetUserBookingDetialsUseCase implements IGetUserBookingDetialsUseCa
     upcoming: BookingDTO[],
     past: BookingDTO[],
     joinedGames: {
-        upcoming: any[],
-        past: any[]
+        upcoming: SharedBookingDTO[],
+        past: SharedBookingDTO[]
     }
   }> {
     const today = new Date();
@@ -69,11 +70,11 @@ export class GetUserBookingDetialsUseCase implements IGetUserBookingDetialsUseCa
     const joinedGamesData = await this.bookingRepo.find();
     const userJoinedGames = joinedGamesData.filter((game: ISharedBookingEntity) =>
         Array.isArray(game.userIds) &&
-        (game.userIds as Types.ObjectId[]).some((val) => val._id.toString() === userId)
+        (game.userIds).some((val) => val._id && val?._id.toString() === userId)
     );
 
-    const upcomingJoined: any[] = [];
-    const pastJoined: any[] = [];
+    const upcomingJoined: SharedBookingDTO[] = [];
+    const pastJoined: SharedBookingDTO[] = [];
     for (let game of userJoinedGames) {
   
         const turf = await this.turfRepo.getTurfByTurfId(game.turfId);
@@ -81,6 +82,7 @@ export class GetUserBookingDetialsUseCase implements IGetUserBookingDetialsUseCa
 
         const sharedGameFormatted = {
             id: game?.id.toString(),
+            bookingId:game.bookingId || '',
             turfId: game.turfId,
             turfName: turf?.name || '',
             turfImage: turf?.turfPhotos || [],
@@ -92,9 +94,9 @@ export class GetUserBookingDetialsUseCase implements IGetUserBookingDetialsUseCa
             currency: "₹",
             status: game.status,
             sport: "Football",
-            walletBalance,
-            playerCount: game.playerCount,
-            joinedUsers: game.userIds
+            // walletBalance,
+            // playerCount: game.playerCount,
+            // joinedUsers: game.userIds
     };
 
     if (isUpcoming(game.date,game.time)) {

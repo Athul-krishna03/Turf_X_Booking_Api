@@ -1,5 +1,5 @@
 
-type transactions = {
+export type transactions = {
     amount: number;
     type: string;
     date?:string | number ;

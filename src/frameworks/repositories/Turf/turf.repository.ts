@@ -15,7 +15,7 @@ export class TurfRepository
     super(TurfModel);
   }
   async getTurfByTurfId(turfId: string): Promise<ITurfEntity | null> {
-    return await TurfModel.findOne({ turfId });
+    return await TurfModel.findOne({ turfId }).lean();
   }
   async findByEmail(email: string): Promise<ITurfEntity | null> {
     const client = await TurfModel.findOne({ email }).lean();

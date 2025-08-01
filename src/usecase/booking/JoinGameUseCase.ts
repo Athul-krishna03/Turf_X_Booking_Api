@@ -22,6 +22,7 @@ export class JoinGameUseCase implements IJoinGameUseCase{
         console.log("data inside usecase", data);
         try {
             const booking = await this._bookingRepo.joinGame(data);
+            
             if (booking && booking.userIds.length === booking.playerCount) {
                 await this._bookingRepo.updateJoinedGameBookingStatus(booking.id, {
                     isSlotLocked:true,

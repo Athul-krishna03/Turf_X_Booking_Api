@@ -21,7 +21,7 @@ async execute(userId: string): Promise<IHostedGame[]> {
         const gameDate = new Date(game.date);
         gameDate.setHours(0, 0, 0, 0);
             
-        return game.userIds[0]?._id.toString() !== userId && gameDate >= today;
+        return  game.userIds[0]?._id && game.userIds[0]?._id.toString() !== userId && gameDate >= today;
     });
     const mapped = await Promise.all(
     filtered.map(async (game) => {
@@ -41,8 +41,10 @@ async execute(userId: string): Promise<IHostedGame[]> {
             description: "Join the game and showcase your skills!",
             status: game.status,
             imageUrl: turf.turfPhotos[0] || undefined,
-            userIds: game.userIds,
-        };
+            userIds: game.userIds
+                .map(u => u._id?.toString())
+                .filter((id): id is string => typeof id === 'string'),
+            };
     })
     );
 

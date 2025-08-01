@@ -2,10 +2,9 @@ import { inject, injectable } from "tsyringe";
 import { IGetAllBookingDataUseCase } from "../../entities/useCaseInterfaces/turf/IGetAllBookingDataUseCase";
 import { IBookingRepository } from "../../entities/repositoryInterface/booking/IBookingRepository";
 import { ITurfRepository } from "../../entities/repositoryInterface/turf/ITurfRepository";
-import { ISlotRepository } from "../../entities/repositoryInterface/turf/ISlotRepository";
-import { ISlotEntity } from "../../entities/models/slot.entity";
 import { ISharedBookingEntity } from "../../entities/models/sharedBooking.entity";
 import { IBookingEntity } from "../../entities/models/booking.entity";
+import { mapTurfData } from "../../shared/utils/MappingTurfData";
 
 @injectable()
 export class GetAllBookingDataUseCase implements IGetAllBookingDataUseCase{
@@ -27,17 +26,26 @@ export class GetAllBookingDataUseCase implements IGetAllBookingDataUseCase{
 
     for (const booking of normalGame) {
         const turfDetails = await this.turfRepo.getTurfByTurfId(booking.turfId);
+        let turfData
+        if(turfDetails){
+            turfData = mapTurfData([turfDetails])
+        }
+        
         enrichedNormal.push({
         ...booking,
-        turf: turfDetails,
+        turf: turfData,
         });
     }
 
     for(const game of hostedGame){
         const turfDetails = await this.turfRepo.getTurfByTurfId(game.turfId);
+        let turfData
+        if(turfDetails){
+            turfData = mapTurfData([turfDetails])
+        }
         enrichedHosted.push({
             ...game,
-            turf: turfDetails,
+            turf: turfData,
         });
     }
 

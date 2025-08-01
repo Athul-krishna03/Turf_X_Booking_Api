@@ -1,6 +1,7 @@
 import { IBookingEntity } from "../../../entities/models/booking.entity";
 import { ISharedBookingEntity } from "../../../entities/models/sharedBooking.entity";
 import { IBookingRepository } from "../../../entities/repositoryInterface/booking/IBookingRepository";
+import { ISharedBookingCommonDTO, SharedBookingCreateDTO } from "../../../shared/dtos/SharedBooking.dto";
 import { BookingModel } from "../../database/models/booking.model";
 import { SharedSlotBookingModel } from "../../database/models/sharedSlotBooking.model";
 import { TurfModel } from "../../database/models/turf.model";
@@ -77,7 +78,7 @@ export class BookingRepository implements IBookingRepository {
   }
 
   async saveSharedBooking(
-    data: Partial<ISharedBookingEntity>
+    data: Partial<SharedBookingCreateDTO>
   ): Promise<ISharedBookingEntity> {
     const result = await SharedSlotBookingModel.create(data);
     return result as ISharedBookingEntity;
@@ -88,7 +89,7 @@ export class BookingRepository implements IBookingRepository {
     slotId: string;
     userId: string;
     price: number;
-  }): Promise<ISharedBookingEntity | null> {
+  }): Promise<ISharedBookingCommonDTO | null> {
     try {
       const result = await SharedSlotBookingModel.findOneAndUpdate(
         {
@@ -102,7 +103,7 @@ export class BookingRepository implements IBookingRepository {
         },
         { new: true }
       );
-      return result as ISharedBookingEntity;
+      return result as ISharedBookingCommonDTO;
     } catch (error) {
       console.error("BookingRepository joinGame error:", error);
       throw new Error("Failed to join game");
